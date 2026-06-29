@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Eason的小站</title>
+<meta content="Eason的小站，记录 VRChat、相册、音乐和日常。" name="description"/>
+<link href="https://user14491.cn.imgto.link/public/20260619/50674c2c-6018-44b8-94d8-22f28f5fdd0a.avif" rel="icon" type="image/avif"/>
+<link href="https://user14491.cn.imgto.link/public/20260619/50674c2c-6018-44b8-94d8-22f28f5fdd0a.avif" rel="apple-touch-icon"/>
+<meta content="Eason的小站" name="apple-mobile-web-app-title"/>
+<link href="assets/css/style.css?v=20260619-v79-oss-media" rel="stylesheet"/>
+<style id="eason-desktop-sidebar-sync-fix">
+    /* ===== 追加修复：桌面端侧边栏滚动同步 + 顶部栏按钮悬浮范围修复 ===== */
+    :root { --sidebar-stick-top: 98px; }
+
+    @media (min-width: 901px) {
+      .layout {
+        align-items: start !important;
+      }
+      .sidebar {
+        position: relative !important;
+        top: auto !important;
+        align-self: start !important;
+        display: grid !important;
+        gap: 18px !important;
+      }
+      .sidebar-sticky-pack {
+        position: sticky;
+        top: var(--sidebar-stick-top);
+        display: grid;
+        gap: 18px;
+        align-self: start;
+        z-index: 4;
+      }
+
+      /* 顶部栏按钮动画只在按钮内部显示，避免飘出屏幕 */
+      .site-nav .nav-links a,
+      .site-nav .nav-link-btn,
+      .site-nav .icon-btn,
+      .music-play-tip .tip-btn {
+        position: relative !important;
+        overflow: hidden !important;
+        isolation: isolate;
+        transform: translateZ(0);
+        transition: transform .18s ease, color .18s ease, border-color .18s ease, background-color .18s ease, box-shadow .18s ease !important;
+      }
+      .site-nav .nav-links a::after,
+      .site-nav .nav-link-btn::after,
+      .site-nav .icon-btn::after,
+      .music-play-tip .tip-btn::after {
+        content: "";
+        position: absolute;
+        inset: 1px;
+        border-radius: inherit;
+        background: linear-gradient(135deg, rgba(255,255,255,.18), rgba(159,185,201,.12));
+        opacity: 0;
+        transform: scale(.96);
+        transition: opacity .18s ease, transform .18s ease;
+        z-index: -1;
+        pointer-events: none;
+      }
+      .site-nav .nav-links a:hover,
+      .site-nav .nav-link-btn:hover,
+      .site-nav .icon-btn:hover,
+      .music-play-tip .tip-btn:hover,
+      .site-nav .nav-links a:focus-visible,
+      .site-nav .nav-link-btn:focus-visible,
+      .site-nav .icon-btn:focus-visible,
+      .music-play-tip .tip-btn:focus-visible {
+        transform: translateY(-1px) !important;
+        box-shadow: 0 10px 24px rgba(0,0,0,.14);
+      }
+      .site-nav .nav-links a:hover::after,
+      .site-nav .nav-link-btn:hover::after,
+      .site-nav .icon-btn:hover::after,
+      .music-play-tip .tip-btn:hover::after,
+      .site-nav .nav-links a:focus-visible::after,
+      .site-nav .nav-link-btn:focus-visible::after,
+      .site-nav .icon-btn:focus-visible::after,
+      .music-play-tip .tip-btn:focus-visible::after {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      .site-nav .nav-links a::before,
+      .site-nav .nav-link-btn::before,
+      .site-nav .icon-btn::before {
+        left: auto !important;
+        right: auto !important;
+        max-width: 100% !important;
+      }
+      .site-nav .nav-links,
+      .site-nav .nav-actions,
+      .site-nav .nav-dropdown,
+      .site-nav .icon-btn,
+      .site-nav .nav-link-btn {
+        overflow: visible;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .sidebar-sticky-pack {
+        position: static !important;
+        top: auto !important;
+        display: grid;
+        gap: 18px;
+      }
+    }
+  </style>
+<link href="rss.xml" rel="alternate" title="Eason的小站 RSS" type="application/rss+xml"/>
+</head>
+<body>
+<!--
+    ===================== Eason 小站修改标注 =====================
+    1. 顶部栏小头像：https://user14491.cn.imgto.link/public/20260619/4a758bc1381565c01ac36326783ccd7a.avif，HTML 中 class="brand" 的 img。
+    2. 侧边栏大头像：https://user14491.cn.imgto.link/public/20260619/50674c2c-6018-44b8-94d8-22f28f5fdd0a.avif，HTML 中 class="avatar-large"。
+    3. 首页大图：手机端继续使用 https://user14491.cn.imgto.link/public/20260619/img-4913-1.avif；Pad/电脑端改用 https://user14491.cn.imgto.link/public/20260619/img-4913-1.avif。
+    4. 文章数据：index.html 里的 #postList 卡片，以及 assets/js/main.js 的 renderPosts / openArticle。
+    5. 音乐数据：assets/js/main.js 里的 CONFIG.playlist。
+    6. 颜色样式：assets/css/style.css，优先修改 :root 变量和末尾 FINAL FIX 区域。
+    =============================================================
+  -->
+<!-- 背景层：星星、雾光、流星 -->
+<canvas aria-hidden="true" id="starsCanvas"></canvas>
+<div aria-hidden="true" class="mist-bg"></div>
+<div aria-hidden="true" class="meteor-layer" id="meteorLayer"></div>
+<!-- 顶部导航栏：回到顶部时自动收起 -->
+<header class="site-nav" id="siteNav">
+<a aria-label="跳转到首页" class="brand" href="#home">
+<!-- 顶部栏左上角小头像：只改这里的 src 就能更换导航栏头像 -->
+<img alt="Eason头像" src="https://user14491.cn.imgto.link/public/20260619/4a758bc1381565c01ac36326783ccd7a.avif"/>
+<span>Eason</span>
+</a>
+<nav aria-label="主导航" class="nav-links">
+<a href="#home">主页</a>
+<div class="nav-dropdown">
+<button aria-expanded="false" class="nav-link-btn nav-drop-btn" id="articleDropBtn" type="button">文章</button>
+<div class="nav-dropdown-menu">
+<a href="#posts">全部文章</a>
+<a href="#categoryPanel">分类</a>
+<a href="#tagPanel">标签</a>
+</div>
+</div>
+<button class="nav-link-btn" id="galleryOpen" type="button">相册</button>
+<div class="nav-dropdown friend-nav-dropdown">
+<button aria-expanded="false" class="nav-link-btn nav-drop-btn" id="friendDropBtn" type="button">友链</button>
+<div class="nav-dropdown-menu">
+<a href="https://easonzhan.cyou" rel="noopener noreferrer" target="_blank">Eason的下载站</a>
+</div>
+</div>
+<a href="#notice">公告</a>
+<div class="nav-dropdown">
+<button aria-expanded="false" class="nav-link-btn nav-drop-btn" id="aboutDropBtn" type="button">关于</button>
+<div class="nav-dropdown-menu"><a href="https://me.easonzhan.xyz" rel="noopener noreferrer" target="_blank">关于站长</a></div>
+</div>
+</nav>
+<div class="nav-actions">
+<button aria-expanded="true" aria-label="收起顶部栏" class="mobile-nav-toggle icon-btn" id="mobileNavToggle" title="收起顶部栏" type="button">
+<svg aria-hidden="true" viewbox="0 0 24 24"><path d="M7 14l5-5 5 5"></path></svg>
+</button>
+<input aria-label="搜索文章" class="search" id="searchInput" placeholder="搜索文章" type="search"/>
+<button class="icon-btn" id="musicQuick" title="打开音乐弹窗" type="button">
+<svg aria-hidden="true" viewbox="0 0 24 24"><path d="M9 18V6l10-2v12"></path><circle cx="7" cy="18" r="3"></circle><circle cx="17" cy="16" r="3"></circle></svg>
+<span>音乐</span>
+</button>
+<button class="icon-btn" id="paletteBtn" title="个性化调色板" type="button">
+<svg aria-hidden="true" viewbox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18h1.3a2.2 2.2 0 0 0 1.7-3.6l-.3-.4a1.8 1.8 0 0 1 1.4-3h1.5A4.4 4.4 0 0 0 22 9.6 6.6 6.6 0 0 0 15.4 3H12z"></path><circle cx="7.5" cy="10" r="1"></circle><circle cx="10.5" cy="7.5" r="1"></circle><circle cx="14.5" cy="7.5" r="1"></circle><circle cx="16.5" cy="11" r="1"></circle></svg>
+<span>调色</span>
+</button>
+<button class="icon-btn" id="themeBtn" title="深色/浅色切换" type="button">
+<svg aria-hidden="true" id="themeIcon" viewbox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"></path></svg>
+<span id="themeText">主题</span>
+</button>
+</div>
+</header>
+<main id="top">
+<!-- 首屏壁纸 -->
+<section class="hero" id="home">
+<div class="hero-card">
+<picture class="hero-picture">
+<source media="(min-width: 681px)" srcset="https://user14491.cn.imgto.link/public/20260619/img-4913-1.avif"/>
+<img alt="Eason博客首页图" class="hero-img" src="https://user14491.cn.imgto.link/public/20260619/img-4913-1.avif"/>
+</picture>
+<div class="hero-text">
+<h1>Eason</h1>
+<div class="type-line"><span id="typeText"></span><span class="cursor">|</span></div>
+</div>
+<button aria-label="向下滚动" class="hero-scroll" data-scroll-target="#posts" type="button">⌄</button>
+</div>
+</section>
+<!-- 首屏与正文之间的动态分界线 -->
+<div aria-hidden="true" class="hero-divider" id="heroDivider">
+<span class="divider-line"></span>
+<span class="divider-glow"></span>
+<span class="divider-spark divider-spark-1"></span>
+<span class="divider-spark divider-spark-2"></span>
+<span class="divider-center">
+<span class="divider-core"></span>
+<span class="divider-ring"></span>
+</span>
+</div>
+<section class="layout" id="posts">
+<!-- 左侧栏 -->
+<aside class="sidebar">
+<section class="panel profile">
+<img alt="Eason头像" class="avatar-large avatar-clickable" src="https://user14491.cn.imgto.link/public/20260619/50674c2c-6018-44b8-94d8-22f28f5fdd0a.avif"/>
+<h2>Eason</h2>
+<p>嘿嘿</p>
+<a class="douyin" href="https://v.douyin.com/PZZp5gCTvQs/" rel="noopener noreferrer" target="_blank">抖音</a>
+</section>
+<section class="panel notice" id="notice" role="button" tabindex="0">
+<h3 class="panel-title">公告</h3>
+<p>欢迎来到我的数字花园。</p>
+<a class="more" href="https://me.easonzhan.xyz" rel="noopener noreferrer" target="_blank">了解更多</a>
+</section>
+<div class="sidebar-pin-group" id="sidebarPinGroup">
+<section class="panel" id="music">
+<h3 class="panel-title">音乐</h3>
+<div class="mini-player">
+<div class="music-top">
+<div class="record-cover" id="albumCover"><img alt="当前音乐封面"/></div>
+<div class="music-meta">
+<div class="now" id="songName">暂无歌曲</div>
+<div class="music-sub" id="songStatus">暂无歌曲</div>
+<div class="music-sub" id="songArtist">等待添加</div>
+</div>
+</div>
+<audio id="audio" preload="metadata"></audio>
+<div class="time-row"><span id="currentTime">0:00</span><input class="range" id="progress" max="100" min="0" type="range" value="0"/><span id="duration">0:00</span></div>
+<div class="music-controls">
+<button aria-label="上一首" class="player-btn" id="prevBtn" type="button"><svg viewbox="0 0 24 24"><path d="M17 6l-8 6 8 6V6z"></path><path d="M7 6v12"></path></svg></button>
+<button aria-label="播放或暂停" class="player-btn primary" id="playBtn" type="button"><svg id="playIcon" viewbox="0 0 24 24"><path d="M8 6l10 6-10 6V6z"></path></svg></button>
+<button aria-label="下一首" class="player-btn" id="nextBtn" type="button"><svg viewbox="0 0 24 24"><path d="M7 6l8 6-8 6V6z"></path><path d="M17 6v12"></path></svg></button>
+</div>
+<button class="mode-btn" id="loopModeBtn" type="button">列表循环</button>
+<div class="playlist-dropdown" id="playlistDropdown">
+<button aria-label="打开歌单" class="playlist-trigger" id="playlistTrigger" type="button">
+<img alt="当前音乐封面" class="playlist-thumb" id="playlistThumb"/>
+<div class="playlist-trigger-text"><small>歌单</small><strong id="playlistTriggerName">暂无歌曲</strong><span id="playlistTriggerAlbum">等待添加</span></div>
+<span class="playlist-caret">⌄</span>
+</button>
+<div class="playlist-menu" id="playlistMenu"></div>
+</div>
+</div>
+</section>
+<section class="panel" id="categoryPanel"><h3 class="panel-title">分类</h3><div class="category-list" id="categoryStats"></div></section>
+<section class="panel" id="tagPanel"><h3 class="panel-title">标签统计</h3><div class="tag-cloud-stats" id="tagStats"></div></section>
+</div>
+</aside>
+<!-- 主内容：文章筛选、文章列表、分页 -->
+<section class="content">
+<section aria-label="文章工具" class="article-tools">
+<div class="article-title-block">
+<!-- 文章栏标题：这里控制文章列表上方的大标题 -->
+<strong>全部文章</strong>
+<span id="articleTotalText">共 0 篇文章</span>
+</div>
+<div class="tool-actions">
+<button class="tool-btn active" data-filter="all" type="button">全部文章</button>
+<button class="tool-btn" data-filter="游戏日常" type="button">游戏日常</button>
+<button class="tool-btn" data-filter="相册" type="button">相册</button>
+<button class="tool-btn" data-filter="日常分享" type="button">日常分享</button>
+<button class="tool-btn" data-filter="作品分享" type="button">作品分享</button>
+<button class="tool-btn" id="randomPostBtn" type="button">随机漫步</button>
+</div>
+</section>
+<div class="posts" id="postList">
+<article class="post" data-category="作品分享" data-date="2026-06-16" data-extra-images="assets/images/post-2026-06-16-work-share-2.jpg,assets/images/post-2026-06-16-work-share-3.jpg" data-link="https://x.com/ivsbones/status/2032255539196158054?s=61" data-tags="作品分享" data-title="分享推特上一个老师的画">
+<div class="post-thumb"><img alt="推特老师的油画作品分享" src="assets/images/post-2026-06-16-work-share.jpg"/></div>
+<div class="post-body"><h3>分享推特上一个老师的画</h3><div class="meta"><span>日期 2026-06-16</span><span>分类 作品分享</span></div><p>这个错配创意是真不错，要不是我不会画画不然高低临摹一个挂家里。</p><div class="tags"><span>#作品分享</span></div></div>
+</article>
+<article class="post" data-category="日常分享" data-date="2026-06-11" data-tags="日常" data-title="我18岁啦！祝自己生日快乐🎉">
+<div class="post-thumb"><img alt="我18岁生日记录" src="assets/images/post-2026-06-11-birthday.jpg"/></div>
+<div class="post-body"><h3>我18岁啦！祝自己生日快乐🎉</h3><div class="meta"><span>日期 2026-06-11</span><span>分类 日常分享</span></div><p></p><div class="tags"><span>#日常</span></div></div>
+</article>
+<article class="post" data-category="相册" data-date="2026-06-09" data-link="https://v.douyin.com/8YfxAOhFQlE" data-tags="vrchat,相册" data-title="再次见面～">
+<div class="post-thumb"><img alt="再次见面图片分享" src="assets/images/post-2026-06-09.jpg"/></div>
+<div class="post-body"><h3>再次见面～</h3><div class="meta"><span>日期 2026-06-09</span><span>分类 相册</span></div><p></p><div class="tags"><span>#vrchat</span><span>#相册</span></div></div>
+</article>
+<article class="post" data-category="相册" data-date="2026-06-07" data-extra-images="assets/images/post-2026-06-07-kipfel-mamehinata-2.jpg,assets/images/post-2026-06-07-kipfel-mamehinata-3.jpg" data-link="https://v.douyin.com/19Rr9CKl-gM/" data-tags="vrchat,相册" data-title="キプフェル&amp;豆日向">
+<div class="post-thumb"><img alt="キプフェル和豆日向图片分享" src="assets/images/post-2026-06-07.jpg"/></div>
+<div class="post-body"><h3>キプフェル&amp;豆日向</h3><div class="meta"><span>日期 2026-06-07</span><span>分类 相册</span></div><p></p><div class="tags"><span>#vrchat</span><span>#相册</span></div></div>
+</article>
+<article class="post" data-category="相册" data-date="2026-06-02" data-link="https://x.com/takatsukinvrc/status/2061800499934847445?s=61" data-tags="vrchat,相册" data-title="逆风飞行">
+<div class="post-thumb"><img alt="VRC新闻台风特别播报" src="assets/images/post-typhoon.jpg"/></div>
+<div class="post-body"><h3>逆风飞行</h3><div class="meta"><span>日期 2026-06-02</span><span>分类 相册</span></div><p></p><div class="tags"><span>#vrchat</span><span>#相册</span></div></div>
+</article>
+<article class="post" data-category="相册" data-date="2026-06-02" data-tags="vrchat,相册" data-title="我的VRC现状">
+<div class="post-thumb"><img alt="猫猫合集相册" src="assets/images/post-cats.jpg"/></div>
+<div class="post-body"><h3>我的VRC现状</h3><div class="meta"><span>日期 2026-06-02</span><span>分类 相册</span></div><p></p><div class="tags"><span>#vrchat</span><span>#相册</span></div></div>
+</article>
+<article class="post" data-category="相册" data-date="2026-05-31" data-tags="vrchat,游戏日常,相册" data-title="现在钓鱼图玩的人越来越少了">
+<div class="post-thumb"><img alt="现在钓鱼图玩的人越来越少了" src="assets/images/post-fishing.png"/></div>
+<div class="post-body"><h3>现在钓鱼图玩的人越来越少了</h3><div class="meta"><span>日期 2026-05-31</span><span>分类 相册</span></div><p></p><div class="tags"><span>#vrchat</span><span>#游戏日常</span><span>#相册</span></div></div>
+</article>
+</div>
+<section aria-live="polite" class="post-detail-page hidden" id="postDetailPage"></section>
+<div class="pagination" id="pagination"></div>
+</section>
+</section>
+</main>
+<!-- 关于我 -->
+<footer class="site-footer" id="data">
+<div class="footer-grid">
+<div class="footer-stat"><strong id="articleCount">7</strong><span>文章数量</span></div>
+<div class="footer-stat"><strong id="runFooter">1天 00:00:00</strong><span>运行时间</span></div>
+<div class="footer-stat"><strong id="lastVisit">今天</strong><span>网站最后更新时间</span></div>
+</div>
+<p class="footer-nav-links">© 2026 Eason. All Rights Reserved. / <a href="rss.xml" rel="noopener noreferrer" target="_blank">RSS</a> / <a href="sitemap.xml" rel="noopener noreferrer" target="_blank">Sitemap</a></p>
+<p class="icp-link-wrap"><a class="icp-link" href="https://icp.gov.moe/?keyword=20260809" rel="noopener noreferrer" target="_blank"><img alt="萌 ICP 图标" class="icp-icon" src="assets/icons/moe-icp.png"/>萌ICP备20260809号</a></p>
+<p class="upyun-link-wrap">本站由 <a aria-label="又拍云官网" class="upyun-link" href="https://www.upyun.com" rel="noopener noreferrer" target="_blank"><img alt="又拍云" class="upyun-logo" src="assets/icons/upyun-logo.png"/></a> 提供图片加速服务</p>
+</footer>
+<button aria-label="返回顶部" class="backtop is-hidden" id="backTopBtn" type="button">↑</button>
+<!-- 弹窗：公告 / 文章 / 相册 / 音乐 / 调色板 -->
+<div aria-hidden="true" class="modal" id="noticeModal"><div aria-modal="true" class="modal-card notice-modal-card" role="dialog"><button aria-label="关闭" class="modal-close" data-close-modal="" type="button">×</button><h2>公告</h2><p>欢迎来到我的数字花园。</p><a class="message-btn" data-close-modal="" href="https://me.easonzhan.xyz" rel="noopener noreferrer" target="_blank">关于站长</a></div></div>
+<div aria-hidden="true" class="modal" id="articleModal"><div aria-modal="true" class="modal-card article-modal-card" role="dialog"><button aria-label="关闭" class="modal-close" data-close-modal="" type="button">×</button><div id="articleModalBody"></div></div></div>
+<div aria-hidden="true" class="modal" id="galleryModal"><div aria-modal="true" class="modal-card gallery-modal-card" role="dialog"><button aria-label="关闭" class="modal-close" data-close-modal="" type="button">×</button><h2>相册</h2><p class="modal-subtitle">点击图片会打开对应文章页面。</p><div class="gallery-grid" id="galleryGrid"></div></div></div>
+<div aria-hidden="true" class="modal" id="musicModal"><div aria-modal="true" class="modal-card music-modal-card" role="dialog"><button aria-label="关闭" class="modal-close" data-close-modal="" type="button">×</button><div class="music-modal-main"><div class="record-cover music-cover-large" id="musicModalCoverWrap"><img alt="音乐封面" id="musicModalCover"/></div><div class="music-modal-info"><h2 id="musicModalTitle">暂无歌曲</h2><p id="musicModalStatus">暂无歌曲</p><div class="music-sub" id="musicModalArtist">等待添加</div><div class="music-modal-time"><span id="musicModalCurrent">0:00</span><span id="musicModalDuration">0:00</span></div><input class="range" id="musicModalProgress" max="100" min="0" type="range" value="0"/><div class="music-modal-controls"><button class="player-btn" id="modalPrevBtn" type="button">上一首</button><button class="player-btn primary" id="modalPlayBtn" type="button">播放 / 暂停</button><button class="player-btn" id="modalNextBtn" type="button">下一首</button></div><div class="modal-music-options"><button class="mode-btn" id="modalLoopModeBtn" type="button">列表循环</button><div class="playlist-dropdown" id="modalPlaylistDropdown"><button class="playlist-trigger" id="modalPlaylistTrigger" type="button"><img alt="当前歌曲封面" class="playlist-thumb" id="modalPlaylistThumb"/><span class="playlist-trigger-text"><small>歌单</small><strong id="modalPlaylistName">暂无歌曲</strong><span id="modalPlaylistAlbum">等待添加</span></span><span class="playlist-caret">⌄</span></button><div class="playlist-menu" id="modalPlaylistMenu"></div></div></div></div></div></div></div>
+<div aria-hidden="true" class="modal" id="paletteModal"><div aria-modal="true" class="modal-card palette-modal-card" role="dialog"><button aria-label="关闭" class="modal-close" data-close-modal="" type="button">×</button><div class="palette-head"><h2>个性化调色板</h2><button class="palette-reset" id="paletteResetBtn" type="button">重置</button></div><div class="palette-section"><div class="palette-section-title"><span>主题色相</span><b id="hueValue">210</b></div><input class="hue-slider" id="hueSlider" max="360" min="0" type="range" value="210"/></div><div class="palette-section"><div class="palette-section-title"><span>背景模式</span></div><div class="preset-grid"><button class="preset-btn active" data-bg-mode="default" type="button">雾蓝默认</button><button class="preset-btn" data-bg-mode="night" type="button">深夜星空</button></div></div><div class="palette-section"><div class="palette-section-title"><span>壁纸设置</span></div><div class="toggle-grid"><label class="toggle-item"><span><strong>首页壁纸标题</strong><small>控制首页标题和文案显示</small></span><input checked="" id="toggleHeroText" type="checkbox"/></label><label class="toggle-item"><span><strong>背景星星</strong><small>控制背景星点闪烁显示效果</small></span><input checked="" id="toggleStars" type="checkbox"/></label><label class="toggle-item"><span><strong>流星动画</strong><small>控制背景随机流星划过效果</small></span><input checked="" id="toggleMeteor" type="checkbox"/></label><label class="toggle-item"><span><strong>雾光渐变</strong><small>控制雾蓝柔光背景层显示</small></span><input checked="" id="toggleMist" type="checkbox"/></label><label class="toggle-item"><span><strong>分界特效</strong><small>控制首页与正文之间的动态分界线效果</small></span><input checked="" id="toggleDividerFx" type="checkbox"/></label></div></div></div></div>
+<div aria-live="polite" class="music-play-tip" id="musicPlayTip">
+<div class="music-play-tip-inner">
+<span class="music-play-tip-text">是否播放音乐？</span>
+<div class="music-play-tip-actions">
+<button class="tip-btn" id="musicPromptNo" type="button">暂不</button>
+<button class="tip-btn primary" id="musicPromptYes" type="button">播放</button>
+</div>
+</div>
+</div>
+<div aria-hidden="true" class="top-music-popover" id="topMusicPopover"><div class="top-music-card"><div class="top-music-main"><img alt="音乐封面" class="top-music-cover" id="topMusicCover"/><div class="top-music-info"><div class="top-music-title" id="topMusicTitle">暂无歌曲</div><div class="top-music-sub" id="topMusicSub">等待添加</div><div class="top-music-time" id="topMusicTime">0:00 / 0:00</div></div><button aria-label="关闭音乐弹窗" class="top-close" id="topMusicClose" type="button">×</button></div><input class="top-progress" id="topMusicProgress" max="100" min="0" type="range" value="0"/><div class="top-music-controls"><button id="topMusicMode" type="button">循环</button><button id="topMusicPrev" type="button">上一首</button><button class="top-play" id="topMusicPlay" type="button">播放</button><button id="topMusicNext" type="button">下一首</button><button id="topMusicList" type="button">歌单</button></div><div class="top-playlist-panel" id="topMusicPlaylist"></div></div></div>
+<script src="assets/js/main.js?v=20260619-v81-clean_posts_no_message_empty_music"></script>
+<script>
+  /* 兜底修复：确保文章卡片一定可以点进独立页面，并能返回原浏览位置 */
+  (() => {
+    const $ = (selector, root = document) => root.querySelector(selector);
+    const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+    const safeText = (text) => String(text || '').replace(/[&<>"]/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]));
+    const toPlayableMediaUrl = (url) => {
+      // 按要求保留原始 HTTP 媒体链接，不自动改成 HTTPS。
+      return String(url || '');
+    };
+    const getScrollTop = () => Math.max(window.scrollY || 0, document.documentElement.scrollTop || 0, document.body.scrollTop || 0);
+    const slugify = (text) => String(text || '').toLowerCase().replace(/[^a-z0-9一-龥]+/g, '-').replace(/^-|-$/g, '') || 'post';
+    const calcPostWordCount = (...parts) => {
+      const text = parts.filter(Boolean).join(' ').replace(/https?:\/\/\S+/g, '链接');
+      const chineseCount = (text.match(/[㐀-鿿]/g) || []).length;
+      const latinCount = (text.replace(/[㐀-鿿]/g, ' ').match(/[A-Za-z0-9]+(?:[-_][A-Za-z0-9]+)*/g) || []).length;
+      return Math.max(0, chineseCount + latinCount);
+    };
+    const getPostViewCount = (slug, increase = true) => {
+      const key = `eason-post-view-${slug}`;
+      const current = Math.max(0, Number(localStorage.getItem(key) || 0));
+      const next = increase ? current + 1 : current;
+      localStorage.setItem(key, String(next));
+      return next;
+    };
+    const buildPostKicker = (post, slug, title, body, link, increaseViews = true) => {
+      const tagText = (post?.dataset?.tags || '').split(',').filter(Boolean).map((tag) => `#${tag}`).join(' ');
+      const wordCount = calcPostWordCount(body);
+      const views = getPostViewCount(slug, increaseViews);
+      return `<div class="single-post-kicker"><span>帖子字数 ${wordCount} 字</span><span>浏览量 ${views}</span></div>`;
+    };
+    let lastListScroll = 0;
+
+    function ensureDetailPage() {
+      let page = $('#postDetailPage');
+      const postList = $('#postList');
+      if (!page && postList) {
+        page = document.createElement('section');
+        page.id = 'postDetailPage';
+        page.className = 'post-detail-page hidden';
+        page.setAttribute('aria-live', 'polite');
+        postList.insertAdjacentElement('afterend', page);
+      }
+      return page;
+    }
+
+    function getSlug(post, index = 0) {
+      if (post.dataset.slug) return post.dataset.slug;
+      const src = ($('img', post)?.getAttribute('src') || '').split('/').pop()?.replace(/\.[^.]+$/, '') || `post-${index + 1}`;
+      post.dataset.slug = `${post.dataset.date || 'post'}-${slugify(src)}`;
+      return post.dataset.slug;
+    }
+
+    function restoreListScroll(smooth = true) {
+      const saved = Number(sessionStorage.getItem('eason-last-post-list-scroll') || lastListScroll || 0);
+      requestAnimationFrame(() => window.scrollTo({ top: saved, left: 0, behavior: smooth ? 'smooth' : 'auto' }));
+    }
+
+    function showList(push = true, restore = true) {
+      const content = $('.content');
+      const detail = ensureDetailPage();
+      content?.classList.remove('detail-mode');
+      detail?.classList.add('hidden');
+      if (push && new URLSearchParams(location.search).has('post')) {
+        history.pushState({ post: null, listScroll: Number(sessionStorage.getItem('eason-last-post-list-scroll') || 0) }, '', location.pathname + location.hash);
+      }
+      if (restore) restoreListScroll(true);
+    }
+
+    function openPost(post, push = true) {
+      const detail = ensureDetailPage();
+      const content = $('.content');
+      if (!post || !detail || !content) return;
+
+      lastListScroll = getScrollTop();
+      sessionStorage.setItem('eason-last-post-list-scroll', String(lastListScroll));
+
+      const posts = $$('#postList .post');
+      const slug = getSlug(post, posts.indexOf(post));
+      const img = $('img', post)?.getAttribute('src') || '';
+      const title = $('h3', post)?.textContent?.trim() || post.dataset.title || '图片分享';
+      const date = post.dataset.date || '';
+      const category = post.dataset.category || '';
+      const tagsHtml = $('.tags', post)?.innerHTML || '';
+      const body = $('p', post)?.textContent?.trim() || '';
+      const link = post.dataset.link || '';
+      const video = post.dataset.video || '';
+      const videoPlayable = toPlayableMediaUrl(video);
+      const videoHtml = video ? `<div class="single-video-wrap"><video class="single-post-video" controls playsinline preload="metadata" poster="${safeText(img)}"><source src="${safeText(videoPlayable)}" type="video/mp4" />你的浏览器不支持视频播放。</video><div class="single-video-fallback"><strong>电脑端播放不了？</strong><span>如果浏览器拦截 HTTP 视频源，可以直接打开原始链接。</span><a href="${safeText(video)}" target="_blank" rel="noopener noreferrer">打开视频链接</a></div></div>` : '';
+      const extraImagesHtml = (post.dataset.extraImages || '')
+        .split(',')
+        .map((src) => src.trim())
+        .filter(Boolean)
+        .map((src, index) => `<img class="single-post-img single-post-extra-img" src="${safeText(src)}" alt="${safeText(title)} ${index + 2}" />`)
+        .join('');
+      const linkHtml = link ? `<div class="single-link-box"><span>原链接</span><a class="single-post-link" href="${safeText(link)}" target="_blank" rel="noopener noreferrer">${safeText(link)}</a></div>` : '';
+      const postKickerHtml = buildPostKicker(post, slug, title, body, link, true);
+
+      detail.innerHTML = `
+        <article class="single-post-card">
+          <div class="single-post-actions">
+          <button class="single-back" type="button" id="postDetailBackFallback">← 返回文章列表</button>
+        </div>
+          <div class="single-post-head">
+            ${postKickerHtml}
+            <h1>${safeText(title)}</h1>
+            <div class="single-meta"><span>日期 ${safeText(date)}</span><span>分类 ${safeText(category)}</span></div>
+          </div>
+          <img class="single-post-img" src="${safeText(img)}" alt="${safeText(title)}" />
+          ${videoHtml}
+          ${extraImagesHtml}
+          <div class="single-post-content">
+            ${body ? `<p>${safeText(body)}</p>` : ''}
+            ${linkHtml}
+            <div class="tags">${tagsHtml}</div>
+          </div>
+          <div class="single-post-end-actions">
+            <button class="single-share" type="button" id="postDetailShareFallback">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"></path><path d="M12 16V4"></path><path d="M7 9l5-5 5 5"></path></svg>
+              <span>分享</span>
+            </button>
+          </div>
+        </article>`;
+
+      detail.classList.remove('hidden');
+      content.classList.add('detail-mode');
+      $('#postDetailBackFallback')?.addEventListener('click', () => showList(true, true));
+      $('#postDetailShareFallback')?.addEventListener('click', () => window.easonOpenPostShare?.({
+        slug,
+        title,
+        date,
+        category,
+        tags: post.dataset.tags || '',
+        body,
+        link,
+        img,
+        url: `${location.origin}${location.pathname}?post=${encodeURIComponent(slug)}`
+      }));
+      if (push) history.pushState({ post: slug, listScroll: lastListScroll, hardfix: true }, '', `${location.pathname}?post=${encodeURIComponent(slug)}`);
+      $('#posts')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    window.easonOpenPostHardfix = openPost;
+
+    document.addEventListener('click', (event) => {
+      const post = event.target.closest('#postList .post');
+      if (!post) return;
+      if (event.target.closest('a, button, input, textarea, select')) return;
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+      openPost(post, true);
+    }, true);
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      const post = event.target.closest?.('#postList .post');
+      if (!post) return;
+      event.preventDefault();
+      event.stopPropagation();
+      openPost(post, true);
+    }, true);
+
+    window.addEventListener('popstate', (event) => {
+      const slug = new URLSearchParams(location.search).get('post');
+      if (!slug) {
+        if (event.state && typeof event.state.listScroll === 'number') {
+          sessionStorage.setItem('eason-last-post-list-scroll', String(event.state.listScroll));
+        }
+        showList(false, true);
+        return;
+      }
+      const posts = $$('#postList .post');
+      const found = posts.find((post, index) => getSlug(post, index) === slug);
+      if (found) openPost(found, false);
+    });
+  })();
+  </script>
+<script id="eason-v73-sidebar-follow-stop-about">
+  /* v73：桌面 / Pad 侧边栏精确跟随；帖子少的筛选页不跟随，避免左侧空跑 */
+  (() => {
+    const desktopMedia = window.matchMedia('(min-width: 901px)');
+    const nav = document.getElementById('siteNav');
+    const layout = document.querySelector('.layout');
+    const sidebar = document.querySelector('.layout .sidebar');
+    const pin = document.getElementById('sidebarPinGroup');
+    const about = document.querySelector('.site-footer') || document.getElementById('posts');
+    const postList = document.getElementById('postList');
+    const content = document.querySelector('.content');
+    if (!layout || !sidebar || !pin || !about) return;
+
+    const STOP_GAP = 18;
+    const TOP_GAP = 32;
+    const MIN_FOLLOW_VISIBLE_POSTS = 4;
+    let metrics = null;
+    let ticking = false;
+    let disableForShortPage = false;
+
+    function topOffset() {
+      if (!desktopMedia.matches) return 0;
+      const h = nav ? Math.round(nav.getBoundingClientRect().height) : 78;
+      return Math.max(24, h + TOP_GAP);
+    }
+
+    function visiblePostCount() {
+      if (!postList) return 0;
+      return Array.from(postList.querySelectorAll('.post')).filter((post) => !post.classList.contains('hidden')).length;
+    }
+
+    function shouldFollow() {
+      if (!desktopMedia.matches) return false;
+      const layoutRect = layout.getBoundingClientRect();
+      const pinRect = pin.getBoundingClientRect();
+      const infoTop = about.getBoundingClientRect().top + (window.scrollY || document.documentElement.scrollTop || 0);
+      const layoutTop = layoutRect.top + (window.scrollY || document.documentElement.scrollTop || 0);
+      const availableHeight = infoTop - layoutTop;
+      const detailMode = content?.classList.contains('detail-mode');
+
+      if (detailMode) {
+        // 文章详情太短时不要跟随，避免左侧音乐栏跑到关于我附近。
+        const card = document.querySelector('#postDetailPage .single-post-card');
+        const cardHeight = card ? card.getBoundingClientRect().height : 0;
+        const enoughDetail = cardHeight > (pinRect.height + 360) && availableHeight > (pinRect.height + 420);
+        return enoughDetail;
+      }
+
+      const count = visiblePostCount();
+      if (count > 0 && count < MIN_FOLLOW_VISIBLE_POSTS) return false;
+      // 内容区本身不够长时也不跟随。
+      return availableHeight > (pinRect.height + 220);
+    }
+
+    function clearPinState() {
+      pin.classList.remove('is-fixed', 'is-stopped');
+      layout.classList.remove('sidebar-follow-disabled');
+      pin.style.removeProperty('--v71-sidebar-left');
+      pin.style.removeProperty('--v71-sidebar-width');
+      pin.style.removeProperty('--v71-sidebar-stop-top');
+      document.documentElement.style.removeProperty('--v71-sidebar-top');
+    }
+
+    function disableFollow() {
+      pin.classList.remove('is-fixed', 'is-stopped');
+      layout.classList.add('sidebar-follow-disabled');
+      pin.style.removeProperty('--v71-sidebar-left');
+      pin.style.removeProperty('--v71-sidebar-width');
+      pin.style.removeProperty('--v71-sidebar-stop-top');
+      document.documentElement.style.removeProperty('--v71-sidebar-top');
+      metrics = null;
+    }
+
+    function measure() {
+      if (!desktopMedia.matches) {
+        clearPinState();
+        sidebar.classList.remove('v71-sidebar-ready');
+        metrics = null;
+        return;
+      }
+
+      disableForShortPage = !shouldFollow();
+      if (disableForShortPage) {
+        sidebar.classList.remove('v71-sidebar-ready');
+        disableFollow();
+        return;
+      }
+
+      clearPinState();
+      sidebar.classList.add('v71-sidebar-ready');
+
+      const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
+      const offset = topOffset();
+      const pinRect = pin.getBoundingClientRect();
+      const sideRect = sidebar.getBoundingClientRect();
+      const aboutRect = about.getBoundingClientRect();
+      const pinDocTop = pinRect.top + scrollY;
+      const sidebarDocTop = sideRect.top + scrollY;
+      const aboutDocTop = aboutRect.top + scrollY;
+
+      metrics = {
+        offset,
+        startScroll: pinDocTop - offset,
+        stopScroll: aboutDocTop - STOP_GAP - pinRect.height - offset,
+        stopTop: aboutDocTop - STOP_GAP - pinRect.height - sidebarDocTop,
+        left: sideRect.left,
+        width: sideRect.width
+      };
+      update();
+    }
+
+    function update() {
+      if (!desktopMedia.matches) {
+        clearPinState();
+        return;
+      }
+      if (disableForShortPage || !shouldFollow()) {
+        disableFollow();
+        disableForShortPage = true;
+        return;
+      }
+      if (!metrics) {
+        measure();
+        return;
+      }
+      const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
+      const sideRect = sidebar.getBoundingClientRect();
+      const offset = topOffset();
+      metrics.offset = offset;
+      metrics.left = sideRect.left;
+      metrics.width = sideRect.width;
+      document.documentElement.style.setProperty('--v71-sidebar-top', `${offset}px`);
+      pin.style.setProperty('--v71-sidebar-left', `${metrics.left}px`);
+      pin.style.setProperty('--v71-sidebar-width', `${metrics.width}px`);
+
+      if (scrollY < metrics.startScroll) {
+        pin.classList.remove('is-fixed', 'is-stopped');
+        pin.style.removeProperty('--v71-sidebar-stop-top');
+        return;
+      }
+
+      if (scrollY >= metrics.stopScroll) {
+        pin.classList.remove('is-fixed');
+        pin.classList.add('is-stopped');
+        pin.style.setProperty('--v71-sidebar-stop-top', `${Math.max(0, metrics.stopTop)}px`);
+        return;
+      }
+
+      pin.classList.remove('is-stopped');
+      pin.classList.add('is-fixed');
+      pin.style.removeProperty('--v71-sidebar-stop-top');
+    }
+
+    function requestUpdate() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        update();
+      });
+    }
+
+    function requestMeasure() {
+      requestAnimationFrame(measure);
+    }
+
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    window.addEventListener('resize', requestMeasure, { passive: true });
+    window.addEventListener('load', requestMeasure, { once: true });
+    document.addEventListener('DOMContentLoaded', requestMeasure, { once: true });
+    document.addEventListener('eason:posts-rendered', requestMeasure);
+    if (postList) {
+      new MutationObserver(requestMeasure).observe(postList, { attributes: true, subtree: true, attributeFilter: ['class'] });
+    }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(requestMeasure).catch(() => {});
+    setTimeout(requestMeasure, 300);
+    setTimeout(requestMeasure, 1200);
+  })();
+  </script>
+<script id="eason-mobile-nav-jump-fix">
+  /* v52：手机端顶部栏页面位置快速跳转兜底修复 */
+  (() => {
+    const $ = (selector, root = document) => root.querySelector(selector);
+    const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+    const mobile = window.matchMedia('(max-width: 900px)');
+    const nav = $('#siteNav');
+
+    function closeDropdowns() {
+      $$('.nav-dropdown.open').forEach((drop) => {
+        drop.classList.remove('open');
+        $('.nav-drop-btn', drop)?.setAttribute('aria-expanded', 'false');
+      });
+    }
+
+    function collapseMobileNav() {
+      if (!mobile.matches || !nav) return;
+      nav.classList.add('mobile-links-collapsed');
+      localStorage.setItem('eason-mobile-nav-collapsed', '1');
+      const toggle = $('#mobileNavToggle');
+      if (toggle) {
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', '展开顶部栏');
+        toggle.setAttribute('title', '展开顶部栏');
+      }
+    }
+
+    function getTarget(hash) {
+      if (!hash || hash === '#') return null;
+      const id = decodeURIComponent(hash.slice(1));
+      return document.getElementById(id) || document.querySelector(hash);
+    }
+
+    function jumpTo(hash, updateHash = true) {
+      if (hash === '#home' || hash === '#top') {
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+        if (updateHash) history.replaceState(null, '', location.pathname + hash);
+        closeDropdowns();
+        collapseMobileNav();
+        return true;
+      }
+      const target = getTarget(hash);
+      if (!target) return false;
+      const navHeight = nav && !nav.classList.contains('mobile-links-collapsed') ? nav.getBoundingClientRect().height : 0;
+      const top = Math.max(0, target.getBoundingClientRect().top + window.pageYOffset - Math.min(navHeight + 14, 130));
+      window.scrollTo({ top, left: 0, behavior: 'smooth' });
+      if (updateHash) history.replaceState(null, '', location.pathname + hash);
+      closeDropdowns();
+      collapseMobileNav();
+      return true;
+    }
+
+    document.addEventListener('click', (event) => {
+      const link = event.target.closest?.('.site-nav a[href^="#"]');
+      if (!link) return;
+      const hash = link.getAttribute('href');
+      if (!hash || hash === '#') return;
+      const ok = jumpTo(hash, true);
+      if (ok) {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation?.();
+      }
+    }, true);
+
+    document.addEventListener('click', (event) => {
+      const btn = event.target.closest?.('#galleryOpen');
+      if (!btn || !mobile.matches) return;
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation?.();
+      const albumBtn = document.querySelector('.tool-btn[data-filter="相册"]');
+      albumBtn?.click();
+      jumpTo('#posts', false);
+    }, true);
+  })();
+  </script>
+</body>
+</html>
