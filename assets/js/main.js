@@ -49,13 +49,6 @@ const CONFIG = {
       sources: ["assets/music/qingniaoxianmeng_akie.mp3"]
     },
     {
-      name: "一点",
-      artist: "Muyoi、徐梦洁",
-      cover: "assets/images/music/yidian_muyoi_xumengjie.jpg",
-      src: "assets/music/yidian_muyoi_xumengjie.mp3",
-      sources: ["assets/music/yidian_muyoi_xumengjie.mp3"]
-    },
-    {
       name: "芭蕉夜雨",
       artist: "ChiliChill乐团",
       cover: "assets/images/music/bajiaoyeyu_chilichill.jpg",
@@ -70,6 +63,13 @@ const CONFIG = {
       sources: ["assets/music/biehuitou_xiangqianzou_ciyo.mp3"]
     },
     {
+      name: "一点",
+      artist: "Muyoi、徐梦洁",
+      cover: "assets/images/music/yidian_muyoi_xumengjie.jpg",
+      src: "assets/music/yidian_muyoi_xumengjie.mp3",
+      sources: ["assets/music/yidian_muyoi_xumengjie.mp3"]
+    },
+    {
       name: "123木头人",
       artist: "OriginGirls、沈音音、辞软",
       cover: "assets/images/music/mutouren_origingirls_shenyinyin_ciruan.jpg",
@@ -77,11 +77,11 @@ const CONFIG = {
       sources: ["assets/music/mutouren_origingirls_shenyinyin_ciruan.mp3"]
     },
     {
-      name: "此生注定孤单",
-      artist: "刀酱",
-      cover: "assets/images/music/cishengzhudinggudan_daojiang.jpg",
-      src: "assets/music/cishengzhudinggudan_daojiang.mp3",
-      sources: ["assets/music/cishengzhudinggudan_daojiang.mp3"]
+      name: "风夏",
+      artist: "不是花火呀",
+      cover: "assets/images/music/fengxia_bushihuahuoya.jpg",
+      src: "assets/music/fengxia_bushihuahuoya.mp3",
+      sources: ["assets/music/fengxia_bushihuahuoya.mp3"]
     },
     {
       name: "向走散的少年如此挥手吧",
@@ -91,11 +91,39 @@ const CONFIG = {
       sources: ["assets/music/xiangzousandeshaonian_aoqiye.mp3"]
     },
     {
-      name: "风夏",
-      artist: "不是花火呀",
-      cover: "assets/images/music/fengxia_bushihuahuoya.jpg",
-      src: "assets/music/fengxia_bushihuahuoya.mp3",
-      sources: ["assets/music/fengxia_bushihuahuoya.mp3"]
+      name: "此生注定孤单",
+      artist: "刀酱",
+      cover: "assets/images/music/cishengzhudinggudan_daojiang.jpg",
+      src: "assets/music/cishengzhudinggudan_daojiang.mp3",
+      sources: ["assets/music/cishengzhudinggudan_daojiang.mp3"]
+    },
+    {
+      name: "月亮星星眨眼睛",
+      artist: "可能是雨雨",
+      cover: "assets/images/music/yueliangxingxing_kenengshiyuyu.jpg",
+      src: "assets/music/yueliangxingxing_kenengshiyuyu.mp3",
+      sources: ["assets/music/yueliangxingxing_kenengshiyuyu.mp3"]
+    },
+    {
+      name: "逃课",
+      artist: "拂言、失眠白貉",
+      cover: "assets/images/music/taoke_fuyan_shimianbaihe.jpg",
+      src: "assets/music/taoke_fuyan_shimianbaihe.mp3",
+      sources: ["assets/music/taoke_fuyan_shimianbaihe.mp3"]
+    },
+    {
+      name: "你走之后",
+      artist: "李佳思",
+      cover: "assets/images/music/nizouzhihou_lijiasi.jpg",
+      src: "assets/music/nizouzhihou_lijiasi.mp3",
+      sources: ["assets/music/nizouzhihou_lijiasi.mp3"]
+    },
+    {
+      name: "拼图爱",
+      artist: "蔣孜怡、岳燃",
+      cover: "assets/images/music/pintuai_jiangziyi_yueran.jpg",
+      src: "assets/music/pintuai_jiangziyi_yueran.mp3",
+      sources: ["assets/music/pintuai_jiangziyi_yueran.mp3"]
     }
   ]
 };
