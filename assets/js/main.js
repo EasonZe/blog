@@ -17,7 +17,7 @@
   ===================== 修改入口说明 =====================
   - CONFIG.siteStartDate：网站运行时间开始日期。
   - CONFIG.typingTexts：首页打字机文案。
-  - CONFIG.playlist：音乐播放器歌单；已接入 4 首上传音源，保留 15 首容量。
+  - CONFIG.playlist：音乐播放器歌单；当前清空，后续重新添加。
   - posts 数据：文章标题、日期、分类、标签、图片、内容链接。
   - initThemePalette：调色板、深浅色、背景开关。
   - initMusic：音乐播放器、歌单、循环模式。
@@ -40,24 +40,63 @@ const CONFIG = {
     '今天也要向喜欢的未来靠近一点。',
     '奔赴星辰大海，不负心中热爱。'
   ],
-  playlistCapacity: 15,
-  defaultCover: "https://user14491.cn.imgto.link/public/20260619/50674c2c-6018-44b8-94d8-22f28f5fdd0a.avif",
   playlist: [
-    { name: "青鸟衔梦", artist: "Akie秋会", cover: "assets/music/covers/qingniao-xianmeng-akie.jpeg", src: "assets/music/qingniao-xianmeng-akie.mp3", sources: ["assets/music/qingniao-xianmeng-akie.mp3"] },
-    { name: "一点", artist: "Muyoi、徐梦洁", cover: "assets/music/covers/yidian-muyoi-xumengjie.jpeg", src: "assets/music/yidian-muyoi-xumengjie.mp3", sources: ["assets/music/yidian-muyoi-xumengjie.mp3"] },
-    { name: "芭蕉夜雨", artist: "ChiliChill乐团", cover: "assets/music/covers/bajiao-yeyu-chilichill.jpeg", src: "assets/music/bajiao-yeyu-chilichill.mp3", sources: ["assets/music/bajiao-yeyu-chilichill.mp3"] },
-    { name: "别回头 向前走", artist: "Ciyo", cover: "assets/music/covers/biehuitou-xiangqianzou-ciyo.jpeg", src: "assets/music/biehuitou-xiangqianzou-ciyo.mp3", sources: ["assets/music/biehuitou-xiangqianzou-ciyo.mp3"] },
-    { name: "待添加歌曲 05", artist: "音源待添加", cover: CONFIG.defaultCover, src: '', sources: [] },
-    { name: "待添加歌曲 06", artist: "音源待添加", cover: CONFIG.defaultCover, src: '', sources: [] },
-    { name: "待添加歌曲 07", artist: "音源待添加", cover: CONFIG.defaultCover, src: '', sources: [] },
-    { name: "待添加歌曲 08", artist: "音源待添加", cover: CONFIG.defaultCover, src: '', sources: [] },
-    { name: "待添加歌曲 09", artist: "音源待添加", cover: CONFIG.defaultCover, src: '', sources: [] },
-    { name: "待添加歌曲 10", artist: "音源待添加", cover: CONFIG.defaultCover, src: '', sources: [] },
-    { name: "待添加歌曲 11", artist: "音源待添加", cover: CONFIG.defaultCover, src: '', sources: [] },
-    { name: "待添加歌曲 12", artist: "音源待添加", cover: CONFIG.defaultCover, src: '', sources: [] },
-    { name: "待添加歌曲 13", artist: "音源待添加", cover: CONFIG.defaultCover, src: '', sources: [] },
-    { name: "待添加歌曲 14", artist: "音源待添加", cover: CONFIG.defaultCover, src: '', sources: [] },
-    { name: "待添加歌曲 15", artist: "音源待添加", cover: CONFIG.defaultCover, src: '', sources: [] }
+    {
+      name: "青鸟衔梦",
+      artist: "Akie秋会",
+      cover: "assets/images/music/qingniaoxianmeng_akie.jpg",
+      src: "assets/music/qingniaoxianmeng_akie.mp3",
+      sources: ["assets/music/qingniaoxianmeng_akie.mp3"]
+    },
+    {
+      name: "一点",
+      artist: "Muyoi、徐梦洁",
+      cover: "assets/images/music/yidian_muyoi_xumengjie.jpg",
+      src: "assets/music/yidian_muyoi_xumengjie.mp3",
+      sources: ["assets/music/yidian_muyoi_xumengjie.mp3"]
+    },
+    {
+      name: "芭蕉夜雨",
+      artist: "ChiliChill乐团",
+      cover: "assets/images/music/bajiaoyeyu_chilichill.jpg",
+      src: "assets/music/bajiaoyeyu_chilichill.mp3",
+      sources: ["assets/music/bajiaoyeyu_chilichill.mp3"]
+    },
+    {
+      name: "别回头 向前走",
+      artist: "Ciyo",
+      cover: "assets/images/music/biehuitou_xiangqianzou_ciyo.jpg",
+      src: "assets/music/biehuitou_xiangqianzou_ciyo.mp3",
+      sources: ["assets/music/biehuitou_xiangqianzou_ciyo.mp3"]
+    },
+    {
+      name: "123木头人",
+      artist: "OriginGirls、沈音音、辞软",
+      cover: "assets/images/music/mutouren_origingirls_shenyinyin_ciruan.jpg",
+      src: "assets/music/mutouren_origingirls_shenyinyin_ciruan.mp3",
+      sources: ["assets/music/mutouren_origingirls_shenyinyin_ciruan.mp3"]
+    },
+    {
+      name: "此生注定孤单",
+      artist: "刀酱",
+      cover: "assets/images/music/cishengzhudinggudan_daojiang.jpg",
+      src: "assets/music/cishengzhudinggudan_daojiang.mp3",
+      sources: ["assets/music/cishengzhudinggudan_daojiang.mp3"]
+    },
+    {
+      name: "向走散的少年如此挥手吧",
+      artist: "傲七爷（江偌绮）",
+      cover: "assets/images/music/xiangzousandeshaonian_aoqiye.jpg",
+      src: "assets/music/xiangzousandeshaonian_aoqiye.mp3",
+      sources: ["assets/music/xiangzousandeshaonian_aoqiye.mp3"]
+    },
+    {
+      name: "风夏",
+      artist: "不是花火呀",
+      cover: "assets/images/music/fengxia_bushihuahuoya.jpg",
+      src: "assets/music/fengxia_bushihuahuoya.mp3",
+      sources: ["assets/music/fengxia_bushihuahuoya.mp3"]
+    }
   ]
 };
 
@@ -376,7 +415,7 @@ const customState = {
   hue: Number(localStorage.getItem('custom-hue') || 210),
   bgMode: localStorage.getItem('custom-bg-mode') || 'default',
   showHeroText: localStorage.getItem('custom-show-hero-text') !== '0',
-  showStars: true,
+  showStars: localStorage.getItem('custom-show-stars') !== '0',
   showMeteor: localStorage.getItem('custom-show-meteor') !== '0',
   showMist: localStorage.getItem('custom-show-mist') !== '0',
   showDividerFx: localStorage.getItem('custom-show-divider-fx') !== '0'
@@ -407,8 +446,7 @@ function applyBackgroundMode(mode) {
 
 function applyWallpaperSwitches() {
   root.classList.toggle('custom-hide-hero-text', !customState.showHeroText);
-  customState.showStars = true;
-  root.classList.remove('custom-hide-stars');
+  root.classList.toggle('custom-hide-stars', !customState.showStars);
   root.classList.toggle('custom-hide-meteor', !customState.showMeteor);
   root.classList.toggle('custom-hide-mist', !customState.showMist);
   root.classList.toggle('custom-hide-divider-fx', !customState.showDividerFx);
@@ -483,79 +521,38 @@ function initStars() {
   const ctx = canvas?.getContext('2d');
   if (!canvas || !ctx) return;
   let stars = [];
-  let size = { w: 0, h: 0, dpr: 1 };
-  let rafId = 0;
-
-  const createStar = (w, h) => ({
-    x: Math.random() * w,
-    y: Math.random() * h,
-    baseX: Math.random() * w,
-    r: Math.random() * 1.65 + .45,
-    phase: Math.random() * Math.PI * 2,
-    speed: Math.random() * .024 + .010,
-    drift: Math.random() * .22 + .04,
-    fall: Math.random() * .09 + .025
-  });
-
+  let size = { w: 0, h: 0 };
+  const createStar = (w, h) => ({ x: Math.random() * w, y: Math.random() * h, r: Math.random() * 1.6 + .3, a: Math.random(), s: Math.random() * .018 + .006 });
   const resize = (force = false) => {
-    const w = Math.max(window.innerWidth, document.documentElement.clientWidth || 0);
-    const h = Math.max(window.innerHeight, document.documentElement.clientHeight || 0);
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
-    if (!force && size.w && Math.abs(w - size.w) < 2 && Math.abs(h - size.h) < 80 && Math.abs(dpr - size.dpr) < .01) return;
-
-    const oldSize = { ...size };
-    canvas.style.width = `${w}px`;
-    canvas.style.height = `${h}px`;
-    canvas.width = Math.round(w * dpr);
-    canvas.height = Math.round(h * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-    const target = Math.min(260, Math.max(90, Math.floor((w * h) / 6200)));
-    stars = stars.length ? stars.slice(0, target).map((star) => {
-      const next = { ...star };
-      next.x = (star.x / (oldSize.w || w)) * w;
-      next.y = (star.y / (oldSize.h || h)) * h;
-      next.baseX = (star.baseX / (oldSize.w || w)) * w;
-      return next;
-    }) : [];
+    const w = Math.max(window.innerWidth, document.documentElement.clientWidth);
+    const h = Math.max(window.innerHeight, document.documentElement.clientHeight);
+    if (!force && size.w && Math.abs(w - size.w) < 2 && Math.abs(h - size.h) < 120) return;
+    const old = { ...size };
+    canvas.width = w;
+    canvas.height = h;
+    const target = Math.min(160, Math.floor((w * h) / 9000));
+    stars = stars.length ? stars.slice(0, target).map((star) => ({ ...star, x: star.x / (old.w || w) * w, y: star.y / (old.h || h) * h })) : [];
     while (stars.length < target) stars.push(createStar(w, h));
-    size = { w, h, dpr };
+    size = { w, h };
   };
-
   const draw = () => {
-    ctx.clearRect(0, 0, size.w, size.h);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     const rgb = getComputedStyle(root).getPropertyValue('--star-rgb').trim() || '159,185,201';
-    for (const star of stars) {
-      star.phase += star.speed;
-      const twinkle = .36 + Math.abs(Math.sin(star.phase)) * .64;
-      const glow = Math.min(1, twinkle + .18);
-      star.x = star.baseX + Math.sin(star.phase * .72) * star.drift * 8;
-
+    stars.forEach((star) => {
+      star.a += star.s;
+      const alpha = .25 + Math.abs(Math.sin(star.a)) * .75;
       ctx.beginPath();
       ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${rgb}, ${twinkle})`;
-      ctx.shadowColor = `rgba(${rgb}, ${glow})`;
-      ctx.shadowBlur = star.r * 5.2;
+      ctx.fillStyle = `rgba(${rgb}, ${alpha})`;
       ctx.fill();
-      ctx.shadowBlur = 0;
-
-      star.y += star.fall;
-      if (star.y > size.h + 8) {
-        star.y = -8;
-        star.baseX = Math.random() * size.w;
-        star.x = star.baseX;
-      }
-    }
-    rafId = requestAnimationFrame(draw);
+      star.y += .05;
+      if (star.y > canvas.height) { star.y = 0; star.x = Math.random() * canvas.width; }
+    });
+    requestAnimationFrame(draw);
   };
-
   let timer;
-  window.addEventListener('resize', () => { clearTimeout(timer); timer = setTimeout(() => resize(), 120); }, { passive: true });
+  window.addEventListener('resize', () => { clearTimeout(timer); timer = setTimeout(() => resize(), 120); });
   window.addEventListener('orientationchange', () => setTimeout(() => resize(true), 180));
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) cancelAnimationFrame(rafId);
-    else { resize(true); draw(); }
-  });
   resize(true);
   draw();
 }
@@ -678,14 +675,13 @@ function initMusic() {
     list: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13"></path><path d="M8 12h13"></path><path d="M8 18h13"></path><path d="M3.5 6h.01"></path><path d="M3.5 12h.01"></path><path d="M3.5 18h.01"></path></svg>'
   };
   const modeIcon = () => playMode === 'single' ? topIcons.singleMode : topIcons.loopMode;
-  const setIconButton = (selector, icon, label) => {
+  const setTopButton = (selector, icon, label) => {
     const btn = $(selector);
     if (!btn) return;
     btn.innerHTML = `${icon}<span class="btn-label">${label}</span>`;
     btn.setAttribute('aria-label', label);
     btn.setAttribute('title', label);
   };
-  const setTopButton = setIconButton;
 
   const saveMusicState = (playing = !audio.paused) => {
     try {
@@ -698,7 +694,7 @@ function initMusic() {
       }));
     } catch {}
   };
-  const current = () => CONFIG.playlist[songIndex] || { name: '暂无歌曲', artist: '等待添加', cover: CONFIG.defaultCover || '', src: '', sources: [] };
+  const current = () => CONFIG.playlist[songIndex] || { name: '暂无歌曲', artist: '等待添加', cover: '', src: '', sources: [] };
   let audioSourceIndex = 0;
   let wantPlaying = false;
   const getSources = (track) => Array.from(new Set([...(track.sources || []), track.src].filter(Boolean)));
@@ -714,17 +710,17 @@ function initMusic() {
   const renderMenus = () => {
     const html = CONFIG.playlist.length ? CONFIG.playlist.map((track, index) => `
       <button class="playlist-item ${index === songIndex ? 'active' : ''}" type="button" data-song-index="${index}">
-        <img src="${safeText(track.cover || CONFIG.defaultCover || '')}" alt="${safeText(track.name)}封面" />
+        <img src="${track.cover}" alt="${safeText(track.name)}封面" />
         <span class="playlist-item-text"><strong>${safeText(track.name)}</strong><small>${safeText(track.artist)}</small></span>
       </button>`).join('') : '<div class="playlist-empty">暂无歌曲</div>';
     ['#playlistMenu', '#modalPlaylistMenu', '#topMusicPlaylist'].forEach((selector) => { const el = $(selector); if (el) el.innerHTML = html; });
   };
   const syncMode = () => {
     audio.loop = playMode === 'single';
-    setIconButton('#loopModeBtn', modeIcon(), modeNames[playMode]);
-    setText('#modalLoopModeBtn', modeNames[playMode]);
+    ['#loopModeBtn', '#modalLoopModeBtn'].forEach((selector) => setText(selector, modeNames[playMode]));
     setTopButton('#topMusicMode', modeIcon(), modeNames[playMode]);
-    ['#topMusicMode', '#loopModeBtn'].forEach((selector) => { const modeBtn = $(selector); if (modeBtn) modeBtn.dataset.mode = playMode; });
+    const topMode = $('#topMusicMode');
+    if (topMode) topMode.dataset.mode = playMode;
     localStorage.setItem('eason-play-mode', playMode);
     saveMusicState();
   };
@@ -732,14 +728,12 @@ function initMusic() {
     const track = current();
     const isPlaying = !audio.paused;
     if (!audio.src) setAudioSource(track, 0);
-    const hasSource = getSources(track).length > 0;
-    const statusText = !hasSource ? '等待音源' : (isPlaying ? '正在播放' : '已暂停');
-    setText('#songName', track.name); setText('#songStatus', statusText); setText('#songArtist', track.artist);
-    setText('#musicModalTitle', track.name); setText('#musicModalStatus', statusText); setText('#musicModalArtist', track.artist);
+    setText('#songName', track.name); setText('#songStatus', isPlaying ? '正在播放' : '已暂停'); setText('#songArtist', track.artist);
+    setText('#musicModalTitle', track.name); setText('#musicModalStatus', isPlaying ? '正在播放' : '已暂停'); setText('#musicModalArtist', track.artist);
     setText('#topMusicTitle', track.name); setText('#topMusicSub', track.artist);
     setText('#playlistTriggerName', track.name); setText('#playlistTriggerAlbum', track.artist);
     setText('#modalPlaylistName', track.name); setText('#modalPlaylistAlbum', track.artist);
-    ['#albumCover img', '#musicModalCover', '#topMusicCover', '#playlistThumb', '#modalPlaylistThumb'].forEach((selector) => { const el = $(selector); if (el) { const cover = track.cover || CONFIG.defaultCover || ''; if (cover) el.src = cover; else el.removeAttribute('src'); } });
+    ['#albumCover img', '#musicModalCover', '#topMusicCover', '#playlistThumb', '#modalPlaylistThumb'].forEach((selector) => { const el = $(selector); if (el) { if (track.cover) el.src = track.cover; else el.removeAttribute('src'); } });
     ['#albumCover', '#musicModalCoverWrap'].forEach((selector) => $(selector)?.classList.toggle('playing', isPlaying));
     $('#playBtn') && ($('#playBtn').innerHTML = isPlaying ? pauseIcon : playIcon);
     setText('#modalPlayBtn', isPlaying ? '暂停' : '播放');
@@ -748,7 +742,6 @@ function initMusic() {
     setTopButton('#topMusicPrev', topIcons.prev, '上一首');
     setTopButton('#topMusicNext', topIcons.next, '下一首');
     setTopButton('#topMusicList', topIcons.list, '歌单');
-    setIconButton('#playlistIconBtn', topIcons.list, '歌单');
     renderMenus();
   };
   const loadSong = (index, autoplay = false) => {
@@ -760,13 +753,11 @@ function initMusic() {
     updateUI();
     wantPlaying = !!autoplay;
     saveMusicState(autoplay);
-    if (autoplay && getSources(current()).length) audio.play().catch(() => { setText('#songStatus', '点击播放'); setText('#musicModalStatus', '点击播放'); });
-    else if (autoplay) { setText('#songStatus', '等待音源'); setText('#musicModalStatus', '等待音源'); }
+    if (autoplay) audio.play().catch(() => { setText('#songStatus', '点击播放'); setText('#musicModalStatus', '点击播放'); });
   };
   const playPause = () => {
     if (!CONFIG.playlist.length) { setText('#songStatus', '暂无歌曲'); setText('#musicModalStatus', '暂无歌曲'); return; }
     if (audio.paused) {
-      if (!getSources(current()).length) { setText('#songStatus', '等待音源'); setText('#musicModalStatus', '等待音源'); return; }
       wantPlaying = true;
       audio.play().catch(() => { setText('#songStatus', '点击播放'); setText('#musicModalStatus', '点击播放'); });
     } else {
@@ -829,9 +820,9 @@ function initMusic() {
     if (btn.id === 'topMusicList') topPlaylistPanel?.classList.toggle('show');
   }, true);
   ['#progress', '#musicModalProgress', '#topMusicProgress'].forEach((selector) => $(selector)?.addEventListener('input', (e) => seek(e.target.value)));
-  ['#playlistTrigger', '#modalPlaylistTrigger', '#playlistIconBtn'].forEach((selector) => $(selector)?.addEventListener('click', (e) => {
+  ['#playlistTrigger', '#modalPlaylistTrigger'].forEach((selector) => $(selector)?.addEventListener('click', (e) => {
     e.stopPropagation();
-    const dropdown = e.currentTarget.closest('.playlist-dropdown') || $('#playlistDropdown');
+    const dropdown = e.currentTarget.closest('.playlist-dropdown');
     dropdown?.classList.toggle('open');
     $('#music')?.classList.toggle('music-panel-open', !!$('#playlistDropdown')?.classList.contains('open'));
   }));
