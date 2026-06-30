@@ -1317,6 +1317,89 @@ function initFooterStats() {
   window.setInterval(updateFooterStats, 1000);
 }
 
+
+
+function initPlaylistViewportFix() {
+  const mainDropdown = document.querySelector('#playlistDropdown');
+  const mainTrigger = document.querySelector('#playlistTrigger');
+  const mainMenu = document.querySelector('#playlistMenu');
+  const allMenus = () => Array.from(document.querySelectorAll('.playlist-menu, .top-playlist-panel'));
+
+  const clearMainMenuVars = () => {
+    if (!mainMenu) return;
+    mainMenu.style.removeProperty('--playlist-left');
+    mainMenu.style.removeProperty('--playlist-top');
+    mainMenu.style.removeProperty('--playlist-width');
+    mainMenu.style.removeProperty('--playlist-max-height');
+  };
+
+  const syncMainMenuPosition = () => {
+    if (!mainDropdown || !mainTrigger || !mainMenu) return;
+    if (!mainDropdown.classList.contains('open') || window.innerWidth < 901) {
+      clearMainMenuVars();
+      return;
+    }
+
+    const rect = mainTrigger.getBoundingClientRect();
+    const gap = 8;
+    const edge = 14;
+    const viewportW = window.innerWidth || document.documentElement.clientWidth;
+    const viewportH = window.innerHeight || document.documentElement.clientHeight;
+    const width = Math.min(rect.width, viewportW - edge * 2);
+    const left = Math.min(Math.max(edge, rect.left), Math.max(edge, viewportW - width - edge));
+
+    let top = rect.bottom + gap;
+    let available = viewportH - top - edge;
+    const roomAbove = rect.top - edge - gap;
+    if (available < 220 && roomAbove > available) {
+      available = Math.min(roomAbove, 520);
+      top = Math.max(edge, rect.top - available - gap);
+    }
+    const maxHeight = Math.max(220, Math.min(520, available));
+
+    mainMenu.style.setProperty('--playlist-left', `${Math.round(left)}px`);
+    mainMenu.style.setProperty('--playlist-top', `${Math.round(top)}px`);
+    mainMenu.style.setProperty('--playlist-width', `${Math.round(width)}px`);
+    mainMenu.style.setProperty('--playlist-max-height', `${Math.round(maxHeight)}px`);
+  };
+
+  const keepActiveVisible = () => {
+    allMenus().forEach((menu) => {
+      if (!menu || getComputedStyle(menu).display === 'none') return;
+      const active = menu.querySelector('.playlist-item.active');
+      if (!active) return;
+      const menuRect = menu.getBoundingClientRect();
+      const activeRect = active.getBoundingClientRect();
+      if (activeRect.bottom > menuRect.bottom || activeRect.top < menuRect.top) {
+        active.scrollIntoView({ block: 'nearest' });
+      }
+    });
+  };
+
+  mainTrigger?.addEventListener('click', () => {
+    requestAnimationFrame(() => {
+      syncMainMenuPosition();
+      keepActiveVisible();
+    });
+  }, true);
+
+  document.addEventListener('click', (event) => {
+    const item = event.target.closest?.('[data-song-index]');
+    if (!item) return;
+    requestAnimationFrame(() => {
+      syncMainMenuPosition();
+      keepActiveVisible();
+    });
+  }, true);
+
+  window.addEventListener('resize', syncMainMenuPosition, { passive: true });
+  window.addEventListener('scroll', syncMainMenuPosition, { passive: true });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') clearMainMenuVars();
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initThemePalette();
   initTyping();
@@ -1325,6 +1408,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initNavigation();
   initDesktopSidebarMusicSticky();
   initMusic();
+  initPlaylistViewportFix();
   initPostsGallery();
   initModals();
   initImageLightbox();
