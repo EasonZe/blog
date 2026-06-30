@@ -124,6 +124,27 @@ const CONFIG = {
       cover: "assets/images/music/pintuai_jiangziyi_yueran.jpg",
       src: "assets/music/pintuai_jiangziyi_yueran.mp3",
       sources: ["assets/music/pintuai_jiangziyi_yueran.mp3"]
+    },
+    {
+      name: "仰望星空",
+      artist: "谣君",
+      cover: "assets/images/music/yangwangxingkong_yaojun.jpg",
+      src: "assets/music/yangwangxingkong_yaojun.mp3",
+      sources: ["assets/music/yangwangxingkong_yaojun.mp3"]
+    },
+    {
+      name: "过去完成时",
+      artist: "鞠婧祎",
+      cover: "assets/images/music/guoquwanchengshi_jujingyi.jpg",
+      src: "assets/music/guoquwanchengshi_jujingyi.mp3",
+      sources: ["assets/music/guoquwanchengshi_jujingyi.mp3"]
+    },
+    {
+      name: "兜售夏天",
+      artist: "鱼骨妹",
+      cover: "assets/images/music/doushouxiatian_yugumei.jpg",
+      src: "assets/music/doushouxiatian_yugumei.mp3",
+      sources: ["assets/music/doushouxiatian_yugumei.mp3"]
     }
   ]
 };
